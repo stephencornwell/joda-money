@@ -41,4 +41,36 @@ class TestMoneyFormatterException {
             .isThrownBy(() -> test.rethrowIOException());
     }
 
+    @Test
+    void test_MoneyFormatException_nullCause_notRethrown() throws IOException {
+        MoneyFormatException test = new MoneyFormatException("Error", null);
+        assertThatNoException()
+            .isThrownBy(() -> test.rethrowIOException());
+    }
+
+    @Test
+    void test_MoneyFormatException_runtimeException_notRethrown() throws IOException {
+        MoneyFormatException test = new MoneyFormatException("Error", new RuntimeException("Inner"));
+        assertThatNoException()
+            .isThrownBy(() -> test.rethrowIOException());
+    }
+
+    @Test
+    void test_MoneyFormatException_nestedIOException_rethrown() throws IOException {
+        IOException ioException = new IOException("Nested IO error");
+        MoneyFormatException test = new MoneyFormatException("Error", ioException);
+        assertThatExceptionOfType(IOException.class)
+            .isThrownBy(() -> test.rethrowIOException())
+            .withMessage("Nested IO error");
+    }
+
+    @Test
+    void test_MoneyFormatException_messagePreservation() {
+        IOException ioException = new IOException("Original message");
+        MoneyFormatException test = new MoneyFormatException("Format error", ioException);
+        assertThatExceptionOfType(IOException.class)
+            .isThrownBy(() -> test.rethrowIOException())
+            .withMessage("Original message");
+    }
+
 }

@@ -2277,4 +2277,115 @@ class TestBigMoney {
 
 
 
+    @Test
+    void test_serialization_corruptedData() throws IOException {
+        CurrencyUnit cu = CurrencyUnit.of("GBP");
+        BigMoney m = BigMoney.of(cu, 123.43d);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (ObjectOutputStream oos = new ObjectOutputStream(baos)) {
+            oos.writeObject(m);
+        }
+        
+        byte[] bytes = baos.toByteArray();
+        bytes[bytes.length - 1] = (byte) 0xFF;
+        
+        ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
+        assertThatExceptionOfType(Exception.class)
+            .isThrownBy(() -> {
+                try (ObjectInputStream ois = new ObjectInputStream(bais)) {
+                    ois.readObject();
+                }
+            });
+    }
+
+    @Test
+    void test_serialization_invalidType() throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (ObjectOutputStream oos = new ObjectOutputStream(baos)) {
+            oos.writeByte('X');
+            oos.writeUTF("USD");
+            oos.writeShort(840);
+            oos.writeShort(2);
+            oos.writeInt(4);
+            oos.write(new byte[]{1, 2, 3, 4});
+            oos.writeInt(2);
+        }
+        
+        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        assertThatExceptionOfType(Exception.class)
+            .isThrownBy(() -> {
+                try (ObjectInputStream ois = new ObjectInputStream(bais)) {
+                    org.joda.money.Ser ser = new org.joda.money.Ser();
+                    ser.readExternal(ois);
+                }
+            });
+    }
+
+    @Test
+    void test_serialization_unknownCurrencyCode() throws IOException, ClassNotFoundException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (ObjectOutputStream oos = new ObjectOutputStream(baos)) {
+            oos.writeByte('B');
+            oos.writeUTF("XXX");
+            oos.writeShort(999);
+            oos.writeShort(2);
+            oos.writeInt(4);
+            oos.write(new byte[]{1, 2, 3, 4});
+            oos.writeInt(2);
+        }
+        
+        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        assertThatExceptionOfType(Exception.class)
+            .isThrownBy(() -> {
+                try (ObjectInputStream ois = new ObjectInputStream(bais)) {
+                    org.joda.money.Ser ser = new org.joda.money.Ser();
+                    ser.readExternal(ois);
+                }
+            });
+    }
+
+    @Test
+    void test_arithmetic_extremeValues_plus() {
+        BigMoney result = GBP_LONG_MAX_PLUS1.plus(BigMoney.parse("GBP 1.00"));
+        assertThat(result.getCurrencyUnit()).isEqualTo(GBP);
+        assertThat(result.getAmount()).isGreaterThan(GBP_LONG_MAX_PLUS1.getAmount());
+    }
+
+    @Test
+    void test_arithmetic_extremeValues_minus() {
+        BigMoney result = GBP_LONG_MIN_MINUS1.minus(BigMoney.parse("GBP 1.00"));
+        assertThat(result.getCurrencyUnit()).isEqualTo(GBP);
+        assertThat(result.getAmount()).isLessThan(GBP_LONG_MIN_MINUS1.getAmount());
+    }
+
+    @Test
+    void test_arithmetic_extremeValues_multipliedBy() {
+        BigMoney result = GBP_LONG_MAX_PLUS1.multipliedBy(bd("0.5"));
+        assertThat(result.getCurrencyUnit()).isEqualTo(GBP);
+        assertThat(result.getAmount()).isLessThan(GBP_LONG_MAX_PLUS1.getAmount());
+    }
+
+    @Test
+    void test_conversion_extremeValues_toMoney() {
+        Money result = GBP_LONG_MAX_PLUS1.toMoney();
+        assertThat(result.getCurrencyUnit()).isEqualTo(GBP);
+        assertThat(result.getAmount().compareTo(GBP_LONG_MAX_PLUS1.getAmount())).isEqualTo(0);
+    }
+
+    @Test
+    void test_conversion_extremeValues_toMoneyWithRounding() {
+        Money result = GBP_LONG_MAX_PLUS1.toMoney(RoundingMode.HALF_UP);
+        assertThat(result.getCurrencyUnit()).isEqualTo(GBP);
+        assertThat(result.getAmount().compareTo(GBP_LONG_MAX_PLUS1.getAmount())).isEqualTo(0);
+    }
+
+    @Test
+    void test_scale_extremeValues() {
+        BigMoney bigScale = BigMoney.of(GBP, new BigDecimal("1.123456789012345678901234567890"));
+        assertThat(bigScale.getScale()).isEqualTo(30);
+        
+        BigMoney withCurrencyScale = bigScale.withCurrencyScale(RoundingMode.HALF_UP);
+        assertThat(withCurrencyScale.getScale()).isEqualTo(2);
+    }
+
 }

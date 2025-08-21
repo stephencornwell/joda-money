@@ -1709,4 +1709,39 @@ class TestMoney {
         assertThat(test).hasToString("EUR -5.78");
     }
 
+    @Test
+    void test_arithmetic_overflow_plus() {
+        Money result = GBP_LONG_MAX_PLUS1.plus(Money.parse("GBP 1.00"));
+        assertThat(result.getCurrencyUnit()).isEqualTo(GBP);
+        assertThat(result.getAmount()).isGreaterThan(GBP_LONG_MAX_PLUS1.getAmount());
+    }
+
+    @Test
+    void test_arithmetic_overflow_minus() {
+        Money result = GBP_LONG_MIN_MINUS1.minus(Money.parse("GBP 1.00"));
+        assertThat(result.getCurrencyUnit()).isEqualTo(GBP);
+        assertThat(result.getAmount()).isLessThan(GBP_LONG_MIN_MINUS1.getAmount());
+    }
+
+    @Test
+    void test_arithmetic_overflow_multipliedBy() {
+        Money result = GBP_LONG_MAX_PLUS1.multipliedBy(2);
+        assertThat(result.getCurrencyUnit()).isEqualTo(GBP);
+        assertThat(result.getAmount()).isGreaterThan(GBP_LONG_MAX_PLUS1.getAmount());
+    }
+
+    @Test
+    void test_conversion_overflow_toBigMoney() {
+        BigMoney result = GBP_LONG_MAX_PLUS1.toBigMoney();
+        assertThat(result.getCurrencyUnit()).isEqualTo(GBP);
+        assertThat(result.getAmount()).isEqualTo(GBP_LONG_MAX_PLUS1.getAmount());
+    }
+
+    @Test
+    void test_extremeValue_creation() {
+        Money extremeMoney = Money.of(GBP, BigDecimal.valueOf(Long.MAX_VALUE));
+        assertThat(extremeMoney.getCurrencyUnit()).isEqualTo(GBP);
+        assertThat(extremeMoney.getAmountMajorLong()).isEqualTo(Long.MAX_VALUE);
+    }
+
 }
