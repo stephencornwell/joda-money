@@ -1,8 +1,9 @@
 package org.joda.money.banking;
 
-import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
+
 import org.joda.money.Money;
+import org.junit.jupiter.api.Test;
 
 public class TestBankingOperations {
     
@@ -17,5 +18,6 @@ public class TestBankingOperations {
         assertThat(result.requiresAmlReview).isFalse();
     }
     
-    // Todo: Add concurrent, AML threshold, and reset timing tests
+    // TODO: Need to test concurrent transfers and AML threshold
+    // TODO: Need to test the midnight reset and AML tracking
 }

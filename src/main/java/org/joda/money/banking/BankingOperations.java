@@ -45,8 +45,6 @@ public class BankingOperations {
      * Reset daily totals (runs at midnight EST)
      */
     public void resetDailyTotals() {
-        // BUG: Not atomic - transactions in flight lose their totals
-        // This 50ms window at midnight causes ~20 transactions to skip AML checks
         dailyTotals.clear();
         transactionCount.set(0);
     }
