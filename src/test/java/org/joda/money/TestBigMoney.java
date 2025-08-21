@@ -44,7 +44,6 @@ class TestBigMoney {
 
     private static final CurrencyUnit GBP = CurrencyUnit.of("GBP");
     private static final CurrencyUnit EUR = CurrencyUnit.of("EUR");
-    private static final CurrencyUnit USD = CurrencyUnit.of("USD");
     private static final CurrencyUnit JPY = CurrencyUnit.of("JPY");
     private static final BigDecimal BIGDEC_2_34 = new BigDecimal("2.34");
     private static final BigDecimal BIGDEC_2_345 = new BigDecimal("2.345");
@@ -57,7 +56,6 @@ class TestBigMoney {
     private static final BigMoney GBP_2_35 = BigMoney.parse("GBP 2.35");
     private static final BigMoney GBP_2_36 = BigMoney.parse("GBP 2.36");
     private static final BigMoney GBP_5_78 = BigMoney.parse("GBP 5.78");
-    private static final BigMoney GBP_M1_23 = BigMoney.parse("GBP -1.23");
     private static final BigMoney GBP_M5_78 = BigMoney.parse("GBP -5.78");
     private static final BigMoney GBP_INT_MAX_PLUS1 = BigMoney.ofMinor(GBP, ((long) Integer.MAX_VALUE) + 1);
     private static final BigMoney GBP_INT_MIN_MINUS1 = BigMoney.ofMinor(GBP, ((long) Integer.MIN_VALUE) - 1);

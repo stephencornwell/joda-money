@@ -18,16 +18,12 @@ package org.joda.money;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Arrays;
@@ -48,7 +44,6 @@ class TestMoney {
     private static final CurrencyUnit JPY = CurrencyUnit.of("JPY");
     private static final BigDecimal BIGDEC_2_3 = new BigDecimal("2.3");
     private static final BigDecimal BIGDEC_2_34 = new BigDecimal("2.34");
-    private static final BigDecimal BIGDEC_2_345 = new BigDecimal("2.345");
     private static final BigDecimal BIGDEC_M5_78 = new BigDecimal("-5.78");
 
     private static final Money GBP_0_00 = Money.parse("GBP 0.00");
@@ -57,24 +52,9 @@ class TestMoney {
     private static final Money GBP_2_34 = Money.parse("GBP 2.34");
     private static final Money GBP_2_35 = Money.parse("GBP 2.35");
     private static final Money GBP_2_36 = Money.parse("GBP 2.36");
-    private static final Money GBP_5_78 = Money.parse("GBP 5.78");
     private static final Money GBP_M1_23 = Money.parse("GBP -1.23");
     private static final Money GBP_M5_78 = Money.parse("GBP -5.78");
-    private static final Money GBP_INT_MAX_PLUS1 = Money.ofMinor(GBP, ((long) Integer.MAX_VALUE) + 1);
-    private static final Money GBP_INT_MIN_MINUS1 = Money.ofMinor(GBP, ((long) Integer.MIN_VALUE) - 1);
-    private static final Money GBP_INT_MAX_MAJOR_PLUS1 = Money.ofMinor(GBP, (((long) Integer.MAX_VALUE) + 1) * 100);
-    private static final Money GBP_INT_MIN_MAJOR_MINUS1 = Money.ofMinor(GBP, (((long) Integer.MIN_VALUE) - 1) * 100);
-    private static final Money GBP_LONG_MAX_PLUS1 = Money.of(GBP, BigDecimal.valueOf(Long.MAX_VALUE).add(BigDecimal.ONE));
-    private static final Money GBP_LONG_MIN_MINUS1 =
-            Money.of(GBP, BigDecimal.valueOf(Long.MIN_VALUE).subtract(BigDecimal.ONE));
-    private static final Money GBP_LONG_MAX_MAJOR_PLUS1 = Money.of(
-            GBP,
-            BigDecimal.valueOf(Long.MAX_VALUE).add(BigDecimal.ONE).multiply(BigDecimal.valueOf(100)));
-    private static final Money GBP_LONG_MIN_MAJOR_MINUS1 = Money.of(
-            GBP,
-            BigDecimal.valueOf(Long.MIN_VALUE).subtract(BigDecimal.ONE).multiply(BigDecimal.valueOf(100)));
     private static final Money JPY_423 = Money.parse("JPY 423");
-    private static final Money USD_1_23 = Money.parse("USD 1.23");
     private static final Money USD_2_34 = Money.parse("USD 2.34");
     private static final Money USD_2_35 = Money.parse("USD 2.35");
 
